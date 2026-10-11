@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.odyinterface.externalbuilder;
 
+import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -188,6 +189,10 @@ public class ExternalBuilderPreParserKeyword extends AbstractPreParserKeyword {
 				Files.writeString(output, queryText);
 				
 				if ((boolean)variables.get(ExternalBuilderConfigPreParserKeyword.EXC_KEYWORD)) {
+					if(Files.notExists(Path.of(variables.get(ExternalBuilderConfigPreParserKeyword.BUILDER_PATH_KEYWORD).toString()))) {
+						throw new FileNotFoundException("OdyCompiler not found!");
+					}
+					
 					new ProcessBuilder(
 							variables.get(ExternalBuilderConfigPreParserKeyword.BUILDER_PATH_KEYWORD).toString(), 
 							"--file",
