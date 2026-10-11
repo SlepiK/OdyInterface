@@ -10,13 +10,15 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
-public class ExternalBuilderLLVMPreParserKeyword extends AbstractPreParserKeyword {
+public class ExternalBuilderConfigPreParserKeyword extends AbstractPreParserKeyword {
 
-	public static final String KEYWORD = "EXTLLVM";
+	public static final String KEYWORD = "EXTBUILDERCFG";
 	public static final String BUILDER_PATH = "builder_path";
 	public static final String BUILDER_PATH_KEYWORD = KEYWORD + "." + BUILDER_PATH;
 	public static final String PLAN_PATH = "plan_path";
 	public static final String PLAN_PATH_KEYWORD = KEYWORD + "." + PLAN_PATH;
+	public static final String EXC = "execute";
+	public static final String EXC_KEYWORD = KEYWORD + "." + EXC;
 	
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context,
@@ -29,7 +31,7 @@ public class ExternalBuilderLLVMPreParserKeyword extends AbstractPreParserKeywor
 
 		OptionMap parameters = OptionMap.fromString(parameter);
 		
-		if (parameters.getKeySet().size() != 1) {
+		if (parameters.getKeySet().size() < 2 || parameters.getKeySet().size() > 3) {
 			throw new OdysseusScriptException(
 					KEYWORD + " needs the following not optional parameters (" + BUILDER_PATH + "," + PLAN_PATH + ")");
 		}
@@ -48,6 +50,7 @@ public class ExternalBuilderLLVMPreParserKeyword extends AbstractPreParserKeywor
 		
 		variables.put(BUILDER_PATH_KEYWORD, parameters.get(BUILDER_PATH));
 		variables.put(PLAN_PATH_KEYWORD, parameters.get(PLAN_PATH));
+		variables.put(EXC_KEYWORD, parameters.getBoolean(EXC,true));
 		
 		return null;
 	}

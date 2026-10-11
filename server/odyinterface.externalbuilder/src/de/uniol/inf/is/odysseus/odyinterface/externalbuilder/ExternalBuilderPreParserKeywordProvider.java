@@ -11,7 +11,7 @@ public class ExternalBuilderPreParserKeywordProvider implements IPreParserKeywor
 	public Map<String, Class<? extends IPreParserKeyword>> getKeywords() {
 		Map<String, Class<? extends IPreParserKeyword>> keywords = new HashMap<>();
 		keywords.put(ExternalBuilderPreParserKeyword.KEYWORD, ExternalBuilderPreParserKeyword.class);
-		keywords.put(ExternalBuilderLLVMPreParserKeyword.KEYWORD, ExternalBuilderLLVMPreParserKeyword.class);
+		keywords.put(ExternalBuilderConfigPreParserKeyword.KEYWORD, ExternalBuilderConfigPreParserKeyword.class);
 		return keywords;
 	}
 }

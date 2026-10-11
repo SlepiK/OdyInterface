@@ -9,30 +9,17 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.RemoveQueryCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
-
-
-
-
-import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AddQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterAddMetadata;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterMaxSheddingFactor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterQueryName;
@@ -40,13 +27,10 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ACQueryParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterPriority;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.keyword.configuration.ActivateRewriteRulePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.configuration.DeActivateRewriteRulePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.configuration.ParserPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.configuration.TransCfgPreParserKeyword;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.keyword.MaxSheddingFactorPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.NoMetadataPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryIDPreParserKeyword;
@@ -57,7 +41,6 @@ import de.uniol.inf.is.odysseus.script.parser.keyword.QueryPriorityPreParserKeyw
 public class ExternalBuilderPreParserKeyword extends AbstractPreParserKeyword {
 
 	public static final String KEYWORD = "COMPILEQUERYWITHLLVM";
-	private static IPQLGenerator pqlGenerator;
 			
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context,
@@ -198,10 +181,20 @@ public class ExternalBuilderPreParserKeyword extends AbstractPreParserKeyword {
 			for (Integer lId : queries) {
 				String pqlquery = ExternalBuilderHelper.generatePQLStatementFromQueryPart(executor.getLogicalQueryById(lId, queryCaller).getLogicalPlan());
 			
-				Path output = Path.of(variables.get(ExternalBuilderLLVMPreParserKeyword.PLAN_PATH).toString() +"/" +lId + ".plan");
+				Path pathDir = Path.of(variables.get(ExternalBuilderConfigPreParserKeyword.PLAN_PATH_KEYWORD).toString());
+				Path output = pathDir.resolve(lId + ".plan");
+				
+				Files.createDirectories(pathDir);
 				Files.writeString(output, queryText);
 				
-				Process pb = new ProcessBuilder(variables.get(ExternalBuilderLLVMPreParserKeyword.BUILDER_PATH_KEYWORD).toString(), output.toString()).start();
+				if ((boolean)variables.get(ExternalBuilderConfigPreParserKeyword.EXC_KEYWORD)) {
+					new ProcessBuilder(
+							variables.get(ExternalBuilderConfigPreParserKeyword.BUILDER_PATH_KEYWORD).toString(), 
+							"--file",
+							output.toString(),
+							"--link"
+							).start();
+				}
 			}
 						
 			return null;
