@@ -1,31 +1,29 @@
-# Template for Odysseus Subrepos
+> [!IMPORTANT]\
+> **This repository is archived**\
+> OdyInterface is no longer developed here. Active development has moved to:
+>
+> **https://gitlab.example.com/sierra/odyinterface**
+>
+> Please open issues, merge requests, and questions there. This repository is kept read-only for reference.
 
-This is a template that can be used to create plugins for the Odysseus system. Fork this template repository.
+---
 
-Content
--------
-- client 
-	- contains everything with a gui and can have rcp dependencies. 
-	- Plugins from here are only allowed to have dependencies to projects in common and resource folder.
-- common 
-	- everything that must be shared between client and server must be placed here. 
-	- Plugins from here are only allowed to have dependencies to projects in resource folder.
-- monolithic 
-	- for cases where both client and server plugins are required, these plugins can be used in the monolithic product 
-	- Plugins from here are allowed to have dependencies to projects in client, common, resource, server and wrapper folder.
-- resource 
-	- if necessary, place dependent libraries here, typically they should be imported by an update site, but sometimes this is not possible 
-	- Plugins from here are not allowed to have any dependencies to projects outside this folder.
-- server 
-	- contains everything that can be used on a server, i.e. does not have any gui or direct user interaction 
-	- Plugins from here are only allowed to have dependencies to projects in common and resource folder.
-- test
-	- todo ... 
-- wrapper 
-	- special server plugins that provide access to external resources 
-	- Plugins from here are only allowed to have dependencies to projects in common, resource and server folder.  
-- odysseus_dev:
-	- This git submodule contains the current target platform and products to start a client, a server or a monolithic version of Odysseus
-	- copy content to own folder, if changes are necessary that should not be reflected globally (i.e. for all Odysseus related plugins)
+# OdyInterface
 
-  
+![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
+![Status: Archived](https://img.shields.io/badge/status-archived-red.svg)
+
+**OdyInterface** is the interface between Odysseus and OdyCompiler (https://github.com/SlepiK/OdyCompiler).
+
+> ⚠️ **Research prototype.**\
+> OdyInterface is intended for experimentation and exploration, not for production use.
+
+## Architecture
+
+The project is based on the Odysseus template project and copies some existing parts to combine them in such a way that the current logical plan can be exported as PQL, thereby invoking the OdyCompiler.
+
+> ⚠️ The OdyInterface for Odysseus is merely a proof of concept — it should be reimplemented using a (simpler) pipeline approach!
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
