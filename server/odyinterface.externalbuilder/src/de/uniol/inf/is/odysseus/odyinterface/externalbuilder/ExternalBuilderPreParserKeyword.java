@@ -9,6 +9,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -40,6 +43,7 @@ import de.uniol.inf.is.odysseus.script.parser.keyword.QueryParamPreParserKeyword
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryPriorityPreParserKeyword;
 
 public class ExternalBuilderPreParserKeyword extends AbstractPreParserKeyword {
+	private static final Logger LOG = LoggerFactory.getLogger(ExternalBuilderPreParserKeyword.class);
 
 	public static final String KEYWORD = "COMPILEQUERYWITHLLVM";
 			
@@ -193,12 +197,24 @@ public class ExternalBuilderPreParserKeyword extends AbstractPreParserKeyword {
 						throw new FileNotFoundException("OdyCompiler not found!");
 					}
 					
-					new ProcessBuilder(
+					Path exeOutput = pathDir.resolve("native_odysseus_executable");
+					
+					ProcessBuilder pb = new ProcessBuilder(
 							variables.get(ExternalBuilderConfigPreParserKeyword.BUILDER_PATH_KEYWORD).toString(), 
 							"--file",
 							output.toString(),
-							"--link"
-							).start();
+							"-o",
+							exeOutput.toString(),
+							"--link",
+							"-O 3"
+							);
+					
+
+					Process p = pb.start();
+					p.inputReader().lines().forEach(line -> LOG.info("[builder] {}", line));
+					int exit = p.waitFor();
+					
+					executor.removeQuery(lId, queryCaller);
 				}
 			}
 						
