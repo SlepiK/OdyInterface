@@ -1,8 +1,8 @@
 > [!IMPORTANT]\
 > **This repository is archived**\
-> OdyInterface is no longer developed here. Active development has moved to:
+> OdyInterface is no longer developed here. Development has moved to:
 >
-> **https://gitlab.example.com/sierra/odyinterface**
+> **https://odysseus.informatik.uni-oldenburg.de** and **https://git.swl.informatik.uni-oldenburg.de**
 >
 > Please open issues, merge requests, and questions there. This repository is kept read-only for reference.
 
